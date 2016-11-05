@@ -8,3 +8,8 @@ group :development do
   gem 'foreman'
   gem 'rubocop', require: false
 end
+
+group :test do
+  gem 'rspec'
+  gem 'rack-test'
+end

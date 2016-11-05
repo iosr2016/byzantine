@@ -1,5 +1,5 @@
-require 'sinatra'
+require './config/environment'
 
 get '/' do
-  "Hello paxos!"
+  'Hello Paxos!'
 end
