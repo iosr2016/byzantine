@@ -1,5 +1,5 @@
-require 'paxos/persistance/p_store'
-require 'paxos/configuration'
+require './lib/paxos/persistance/p_store'
+require './lib/paxos/configuration'
 
 module Paxos
   extend Forwardable
