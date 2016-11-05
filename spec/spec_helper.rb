@@ -3,6 +3,11 @@ ENV['RACK_ENV'] = 'test'
 require './config/environment'
 require './application'
 
+if %w(1 true).include? ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start
+end
+
 module ApplicationMixin
   def app
     Sinatra::Application
