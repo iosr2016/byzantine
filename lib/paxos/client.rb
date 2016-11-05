@@ -24,8 +24,8 @@ module Paxos
       @data_store ||= store_factory.create :data
     end
 
-    def sequence_store
-      @sequence_store ||= store_factory.create :sequence
+    def session_store
+      @session_store ||= store_factory.create :session_store
     end
 
     def store_factory
