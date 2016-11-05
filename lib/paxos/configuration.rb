@@ -5,7 +5,7 @@ module Paxos
     attr_reader :data_store, :paxos_store
 
     def initialize
-      @store_adapter = Persistance::PStore
+      @store_adapter = Persistence::PStore
 
       @data_store  = store_adapter.new 'data.pstore'
       @paxos_store = store_adapter.new 'paxos.pstore'

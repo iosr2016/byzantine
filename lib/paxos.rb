@@ -1,4 +1,4 @@
-require './lib/paxos/persistance/p_store'
+require './lib/paxos/persistence/p_store'
 require './lib/paxos/configuration'
 
 module Paxos

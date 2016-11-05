@@ -1,7 +1,7 @@
 require 'pstore'
 
 module Paxos
-  module Persistance
+  module Persistence
     class PStore
       attr_reader :file_path
 
