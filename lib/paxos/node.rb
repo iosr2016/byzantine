@@ -1,9 +1,15 @@
 module Paxos
   class Node
-    attr_reader :url
+    attr_reader :id, :url
 
-    def initialize(url)
+    def initialize(id, url)
+      @id = id
       @url = url
+    end
+
+    def self.from_config(config)
+      url, id = config.split '#'
+      new id, url
     end
 
     def send(message)

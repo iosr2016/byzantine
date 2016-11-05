@@ -6,6 +6,8 @@ module Paxos
 
     attr_reader :configuration
 
+    delegate node_id: :configuration
+
     def initialize
       @configuration = Configuration.new
     end
