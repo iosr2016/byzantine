@@ -6,14 +6,16 @@ module Paxos
 
     attr_reader :configuration
 
-    def_delegators :configuration, :data_store, :paxos_store
-
     def initialize
       @configuration = Configuration.new
     end
 
     def configure
       yield configuration
+    end
+
+    def distributed
+      @distributed ||= Distributed.new configuration
     end
   end
 end
