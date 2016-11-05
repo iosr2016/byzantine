@@ -1,0 +1,15 @@
+verify_signatures: false
+
+PreCommit:
+  RuboCop:
+    enabled: true
+    command: ['bundle', 'exec', 'rubocop', '-c', './.rubocop.yml']
+    on_warn: fail
+  BundleCheck:
+    enabled: true
+    on_warn: fail
+
+PrePush:
+  BundleInstall:
+    enabled: true
+    on_warn: fail
