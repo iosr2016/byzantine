@@ -1,16 +1,17 @@
 module Paxos
   module Messages
     class PrepareMessage < BaseMessage
-      attr_reader :key, :sequence_number, :value
+      attr_reader :sequence_number, :value
 
-      def initialize(key:, sequence_number:, value:)
-        @key              = key
+      def initialize(node_id:, key:, sequence_number:, value:)
+        super
         @sequence_number  = sequence_number
         @value            = value
       end
 
       def to_h
         {
+          node_id: node_id,
           key: key,
           sequence_number: sequence_number,
           value: value
