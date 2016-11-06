@@ -7,10 +7,6 @@ module Byzantine
         @node_id  = node_id
         @key      = key
       end
-
-      def to_h
-        raise NotImplementedError, 'Implement this method in derived class.'
-      end
     end
   end
 end

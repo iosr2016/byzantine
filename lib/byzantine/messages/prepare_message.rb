@@ -8,15 +8,6 @@ module Byzantine
         @sequence_number  = sequence_number
         @value            = value
       end
-
-      def to_h
-        {
-          node_id: node_id,
-          key: key,
-          sequence_number: sequence_number,
-          value: value
-        }
-      end
     end
   end
 end
