@@ -6,9 +6,10 @@ Bundler.require(Sinatra::Base.environment)
 
 require './lib/paxos'
 
-client = Paxos::Client.new
+server = Paxos::Server.new
 
-client.configure do |config|
+server.configure do |config|
+  config.port = 4000
   config.node_id = 0
   config.nodes_config = [
     'http://example1.com:5000#1',
@@ -17,4 +18,4 @@ client.configure do |config|
   ]
 end
 
-$client = client # rubocop:disable Style/GlobalVars
+$server = server # rubocop:disable Style/GlobalVars

@@ -1,19 +1,9 @@
 module Paxos
-  class Client
-    extend Forwardable
-
-    include Getter
-
+  class Context
     attr_reader :configuration
 
-    delegate node_id: :configuration
-
-    def initialize
-      @configuration = Configuration.new
-    end
-
-    def configure
-      yield configuration
+    def initialize(configuration)
+      @configuration = configuration
     end
 
     def distributed
