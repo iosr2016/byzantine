@@ -1,27 +1,38 @@
 module Paxos
   module Roles
-    module Acceptor
-      def prepare(message)
-        sequence_number = session_store.get(message.key)[:sequence_number]
-        return unless sequence_number < message.sequence_number
+    class Acceptor < BaseRole
+      def_delegators :message, :key, :sequence_number, :value, :node_id
 
-        promise(message)
-      end
-
-      def accept(message)
-        data = session_store.get(message.key)
-        return unless sequence_number == data
-
-        data_store.set(message.key, data[:value])
+      def call
+        case message
+        when Message::PrepareMessage
+          prepare
+        when Messages::AcceptMessage
+          accept
+        end
       end
 
       private
 
-      def promise(message)
-        session_store.set(message.key, sequence_number: message.sequence_number, value: message.value)
+      def prepare
+        last_sequence_number = session_store.get(key)[:sequence_number]
+        return unless last_sequence_number < sequence_number
 
-        node = distributed.node_by_id message.node_id
-        distributed.send node, Messages::PromiseMessage.new(sequence_number: message.sequence_number, key: message.key)
+        prepare_promise
+      end
+
+      def accept
+        data = session_store.get(key)
+        return unless sequence_number == data[:sequence_number]
+
+        data_store.set(key, data[:value])
+      end
+
+      def prepare_promise
+        session_store.set(key, sequence_number: sequence_number, value: value)
+
+        node = distributed.node_by_id node_id
+        distributed.send node, Messages::PromiseMessage.new(sequence_number: sequence_number, key: key)
       end
     end
   end

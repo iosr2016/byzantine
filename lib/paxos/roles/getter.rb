@@ -1,8 +1,8 @@
 module Paxos
   module Roles
-    module Getter
-      def get(key)
-        data_store.get key
+    class Getter < BaseRole
+      def call
+        data_store.get message.key
       end
     end
   end

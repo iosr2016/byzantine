@@ -1,31 +1,42 @@
 module Paxos
   module Roles
-    module Proposer
-      def request(message)
-        number = sequence_number message.key
-        session_store.set(message.key, sequence_number: number, value: message.value)
-        prepare_message = Messages::PrepareMessage.new key: message.key, sequence_number: number, value: message.value
+    class Proposer < BaseRole
+      def_delegators :message, :key, :sequence_number, :value
 
-        distributed.broadcast prepare_message
-      end
-
-      def promise(message)
-        data = session_store.get(message.key)
-        return if data[:sequence_number] != message.sequence_number
-
-        handle_promise message.key, data
+      def call
+        case message
+        when Message::RequestMessage
+          request
+        when Messages::PromiseMessage
+          promise
+        end
       end
 
       private
 
-      def sequence_number(key)
-        number_value = session_store.get(key)
-        return number_value[:sequence_number] + 1 if number_value[:sequence_number]
+      def request
+        number = create_sequence_number
+        session_store.set(key, sequence_number: number, value: value)
+        prepare_message = Messages::PrepareMessage.new key: key, sequence_number: number, value: value
+
+        distributed.broadcast prepare_message
+      end
+
+      def promise
+        data = session_store.get(key)
+        return if data[:sequence_number] != sequence_number
+
+        handle_promise data
+      end
+
+      def create_sequence_number
+        data = session_store.get(key)
+        return data[:sequence_number] + 1 if data[:sequence_number]
 
         SequenceGenerator.new.generate_number
       end
 
-      def handle_promise(key, data)
+      def handle_promise(data)
         data[:received_promise_number] = (data[:received_promise_number] || 0) + 1
 
         if !data[:accepted] && quorum?(data)

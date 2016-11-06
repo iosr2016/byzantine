@@ -6,5 +6,4 @@ get '/' do
 end
 
 get '/get/:value' do
-  Paxos.get params[:value]
 end

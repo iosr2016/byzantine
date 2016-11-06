@@ -1,4 +1,5 @@
 require './lib/paxos/persistence/p_store'
+require './lib/paxos/roles/base_role'
 require './lib/paxos/roles/acceptor'
 require './lib/paxos/roles/getter'
 require './lib/paxos/roles/proposer'
