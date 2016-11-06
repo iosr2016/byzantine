@@ -19,6 +19,7 @@ require 'byzantine/distributed'
 require 'byzantine/context'
 require 'byzantine/message_dispatcher'
 require 'byzantine/message_handler'
+require 'byzantine/sequence_generator'
 
 require 'byzantine/server_loop'
 require 'byzantine/server'

@@ -1,3 +1,4 @@
+require 'pry'
 module Byzantine
   module Roles
     class Proposer < BaseRole
@@ -17,7 +18,7 @@ module Byzantine
       def request
         number = create_sequence_number
         session_store.set(key, sequence_number: number, value: value)
-        prepare_message = Messages::PrepareMessage.new key: key, sequence_number: number, value: value
+        prepare_message = Messages::PrepareMessage.new node_id: node_id, key: key, sequence_number: number, value: value
 
         distributed.broadcast prepare_message
       end
@@ -30,8 +31,8 @@ module Byzantine
       end
 
       def create_sequence_number
-        data = session_store.get(key)
-        return data[:sequence_number] + 1 if data[:sequence_number]
+        previous_sequence_number = session_store.get(key)[:sequence_number]
+        return previous_sequence_number + 1 if previous_sequence_number
 
         SequenceGenerator.new.generate_number
       end
@@ -47,16 +48,17 @@ module Byzantine
       end
 
       def quorum?(data)
-        data[:received_promise_number] > distributed.nodes.count / 2 + 1
+        data[:received_promise_number] >= (distributed.nodes.count + 1) / 2
       end
 
       def accept_value(data)
         data[:accepted] = true
 
-        data_sotre.set(key, data[:value])
+        data_store.set(key, data[:value])
         session_store.set(key, data)
-
-        distributed.broadcast Messages::AcceptMessage.new(key: data[:key], sequence_number: data[:sequence_number])
+        accept_message = Messages::AcceptMessage.new(node_id: node_id, key: key,
+                                                     sequence_number: data[:sequence_number])
+        distributed.broadcast accept_message
       end
     end
   end

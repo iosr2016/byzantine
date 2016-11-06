@@ -42,5 +42,27 @@ RSpec.describe Byzantine::Roles::Acceptor do
         end
       end
     end
+
+    context 'with AcceptMessage' do
+      let(:message) { Byzantine::Messages::AcceptMessage.new node_id: 1, key: 'key', sequence_number: 1 }
+
+      context 'with wrong sequence_number' do
+        before { allow(session_store).to receive(:get).and_return(sequence_number: 2) }
+
+        it 'does not call DataStore set' do
+          expect(data_store).not_to receive(:set)
+          acceptor.call
+        end
+      end
+
+      context 'with proper sequence_number' do
+        before { allow(session_store).to receive(:get).and_return(sequence_number: 1, value: 1) }
+
+        it 'sets values in DataStore' do
+          expect(data_store).to receive(:set).with('key', 1)
+          acceptor.call
+        end
+      end
+    end
   end
 end
