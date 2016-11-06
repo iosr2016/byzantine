@@ -1,13 +1,13 @@
 module Paxos
   module Roles
     class Acceptor < BaseRole
-      def_delegators :message, :key, :sequence_number, :value, :node_id
+      def_delegators :message, :key, :sequence_number, :value
 
       def call
         case message
-        when Message::PrepareMessage
+        when Paxos::Messages::PrepareMessage
           prepare
-        when Messages::AcceptMessage
+        when Paxos::Messages::AcceptMessage
           accept
         end
       end
@@ -31,8 +31,12 @@ module Paxos
       def prepare_promise
         session_store.set(key, sequence_number: sequence_number, value: value)
 
-        node = distributed.node_by_id node_id
-        distributed.send node, Messages::PromiseMessage.new(sequence_number: sequence_number, key: key)
+        node = distributed.node_by_id message.node_id
+        distributed.send node, promise_mesage
+      end
+
+      def promise_mesage
+        Paxos::Messages::PromiseMessage.new(node_id: node_id, key: key, sequence_number: sequence_number)
       end
     end
   end

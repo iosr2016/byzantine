@@ -1,10 +1,10 @@
 module Paxos
   module Messages
-    class PrepareMessage < BaseMessage
+    class RequestMessage < BaseMessage
       attr_reader :value
 
       def initialize(node_id:, key:, value:)
-        super
+        super node_id: node_id, key: key
         @value = value
       end
 

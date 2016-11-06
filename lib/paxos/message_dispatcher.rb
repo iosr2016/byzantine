@@ -2,7 +2,7 @@ module Paxos
   class MessageDispatcher
     UnknownMessageType = Class.new StandardError
 
-    def dispatch(message)
+    def dispatch(message) # rubocop:disable Metrics/MethodLength
       case message
       when Messages::RequestMessage
         Roles::Proposer

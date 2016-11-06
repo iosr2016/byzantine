@@ -4,7 +4,7 @@ module Paxos
       extend Forwardable
 
       attr_reader :context, :message
-      def_delegators :context, :distributed, :data_store, :session_store
+      def_delegators :context, :distributed, :data_store, :session_store, :node_id
 
       def initialize(context, message)
         @context = context

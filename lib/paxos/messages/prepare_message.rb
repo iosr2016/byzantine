@@ -4,7 +4,7 @@ module Paxos
       attr_reader :sequence_number, :value
 
       def initialize(node_id:, key:, sequence_number:, value:)
-        super
+        super node_id: node_id, key: key
         @sequence_number  = sequence_number
         @value            = value
       end

@@ -5,9 +5,9 @@ module Paxos
 
       def call
         case message
-        when Message::RequestMessage
+        when Paxos::Messages::RequestMessage
           request
-        when Messages::PromiseMessage
+        when Paxos::Messages::PromiseMessage
           promise
         end
       end
@@ -17,7 +17,7 @@ module Paxos
       def request
         number = create_sequence_number
         session_store.set(key, sequence_number: number, value: value)
-        prepare_message = Messages::PrepareMessage.new key: key, sequence_number: number, value: value
+        prepare_message = Paxos::Messages::PrepareMessage.new key: key, sequence_number: number, value: value
 
         distributed.broadcast prepare_message
       end
@@ -56,7 +56,8 @@ module Paxos
         data_sotre.set(key, data[:value])
         session_store.set(key, data)
 
-        distributed.broadcast Messages::AcceptMessage.new(key: data[:key], sequence_number: data[:sequence_number])
+        distributed.broadcast Paxos::Messages::AcceptMessage.new(key: data[:key],
+                                                                 sequence_number: data[:sequence_number])
       end
     end
   end

@@ -1,6 +1,10 @@
 module Paxos
   class Context
+    extend Forwardable
+
     attr_reader :configuration
+
+    delegate node_id: :configuration
 
     def initialize(configuration)
       @configuration = configuration
