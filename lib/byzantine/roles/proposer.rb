@@ -29,7 +29,7 @@ module Byzantine
         handle_promise data
       end
 
-    def create_sequence_number
+      def create_sequence_number
         data = session_store.get(key)
         return data[:sequence_number] + 1 if data && data[:sequence_number]
 
