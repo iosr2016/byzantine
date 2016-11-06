@@ -8,7 +8,7 @@ module Byzantine
 
     attr_reader :configuration
 
-    delegate store_adapter: :configuration
+    delegate %i(store_adapter url) => :configuration
 
     def initialize(configuration)
       @configuration = configuration
@@ -26,7 +26,7 @@ module Byzantine
     end
 
     def store_path_for(store_name)
-      File.join STORE_DIR, "#{store_name}.pstore"
+      File.join STORE_DIR, "#{url.gsub(/\W/, '')}_#{store_name}.pstore"
     end
   end
 end

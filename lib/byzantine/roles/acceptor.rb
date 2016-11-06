@@ -15,7 +15,8 @@ module Byzantine
       private
 
       def prepare
-        last_sequence_number = session_store.get(key)[:sequence_number]
+        data = session_store.get(key)
+        last_sequence_number = data ? data[:sequence_number] : 0
         return unless last_sequence_number < sequence_number
 
         prepare_promise

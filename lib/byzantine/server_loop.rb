@@ -14,22 +14,18 @@ module Byzantine
     private
 
     def handle_client
+      message = receive_message
+      message_handler.handle message
+
+      $stdout.puts message
+    end
+
+    def receive_message
       client = server.accept
-
-      message = receive_message client
-      reply   = message_handler.handle message
-
-      send_message client, reply if reply
-
+      raw_message = client.gets.chomp!
       client.close
-    end
 
-    def receive_message(client)
-      Marshal.load client.gets.chomp!
-    end
-
-    def send_message(client, message)
-      client.puts Marshal.dump(message)
+      Marshal.load raw_message
     end
 
     def message_handler
