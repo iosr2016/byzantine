@@ -31,8 +31,8 @@ module Byzantine
       end
 
       def create_sequence_number
-        previous_sequence_number = session_store.get(key)[:sequence_number]
-        return previous_sequence_number + 1 if previous_sequence_number
+        data = session_store.get(key)
+        return data[:sequence_number] + 1 if data && data[:sequence_number]
 
         SequenceGenerator.new.generate_number
       end

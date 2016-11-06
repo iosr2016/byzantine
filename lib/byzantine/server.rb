@@ -6,7 +6,7 @@ module Byzantine
 
     attr_reader :configuration
 
-    delegate port: :configuration
+    delegate node: :context
 
     def initialize
       @configuration = Configuration.new
@@ -27,7 +27,7 @@ module Byzantine
     end
 
     def server
-      @server ||= TCPServer.new port
+      @server ||= TCPServer.new node.port
     end
   end
 end

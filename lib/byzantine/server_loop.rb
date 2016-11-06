@@ -16,14 +16,15 @@ module Byzantine
     def handle_client
       client = server.accept
 
-      message = recv_message client
-      reply = message_handler.handle message
-      send_message client, reply
+      message = receive_message client
+      reply   = message_handler.handle message
+
+      send_message client, reply if reply
 
       client.close
     end
 
-    def recv_message(client)
+    def receive_message(client)
       Marshal.load client.gets.chomp!
     end
 

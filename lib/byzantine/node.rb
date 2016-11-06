@@ -19,6 +19,7 @@ module Byzantine
     end
 
     def send(message)
+      Connector.new(self).send message
     end
   end
 end
