@@ -1,6 +1,6 @@
 module Byzantine
-  module Roles
-    class BaseRole
+  module Handlers
+    class BaseHandler
       extend Forwardable
 
       attr_reader :context, :message
@@ -11,7 +11,7 @@ module Byzantine
         @message = message
       end
 
-      def call
+      def handle
         raise NotImplementedError, 'Implement this method in derived class.'
       end
     end

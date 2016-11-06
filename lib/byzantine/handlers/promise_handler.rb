@@ -1,40 +1,16 @@
 module Byzantine
-  module Roles
-    class Proposer < BaseRole
-      def_delegators :message, :key, :sequence_number, :value
+  module Handlers
+    class PromiseHandler < BaseHandler
+      def_delegators :message, :key, :sequence_number
 
-      def call
-        case message
-        when Messages::RequestMessage
-          request
-        when Messages::PromiseMessage
-          promise
-        end
-      end
-
-      private
-
-      def request
-        number = create_sequence_number
-        session_store.set(key, sequence_number: number, value: value)
-        prepare_message = Messages::PrepareMessage.new node_id: node_id, key: key, sequence_number: number, value: value
-
-        distributed.broadcast prepare_message
-      end
-
-      def promise
+      def handle
         data = session_store.get(key)
         return if data[:sequence_number] != sequence_number
 
         handle_promise data
       end
 
-      def create_sequence_number
-        data = session_store.get(key)
-        return data[:sequence_number] + 1 if data && data[:sequence_number]
-
-        SequenceGenerator.new.generate_number
-      end
+      private
 
       def handle_promise(data)
         data[:received_promise_number] = (data[:received_promise_number] || 0) + 1
