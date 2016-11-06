@@ -1,15 +1,21 @@
+require 'zlib'
+
 module Byzantine
   class Node
-    attr_reader :id, :url
+    attr_reader :host, :port
 
-    def initialize(id, url)
-      @id = id
-      @url = url
+    def initialize(host, port)
+      @host = host
+      @port = port
     end
 
-    def self.from_config(config)
-      url, id = config.split '#'
-      new id, url
+    def self.from_url(url)
+      host, port = url.split ':'
+      new host, port
+    end
+
+    def id
+      @id ||= Zlib.crc32 "#{host}:#{port}"
     end
 
     def send(message)

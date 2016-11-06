@@ -4,10 +4,16 @@ module Byzantine
 
     attr_reader :configuration
 
-    delegate node_id: :configuration
-
     def initialize(configuration)
       @configuration = configuration
+    end
+
+    def node_id
+      node.id
+    end
+
+    def node
+      @node ||= Node.from_url configuration.url
     end
 
     def distributed

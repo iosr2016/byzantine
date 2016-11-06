@@ -4,7 +4,7 @@ module Byzantine
 
     attr_reader :configuration
 
-    delegate nodes_config: :configuration
+    delegate node_urls: :configuration
 
     def initialize(configuration)
       @configuration = configuration
@@ -27,8 +27,8 @@ module Byzantine
     end
 
     def build_nodes_lookup
-      nodes_config.map do |node_config|
-        node = Node.from_config node_config
+      node_urls.map do |url|
+        node = Node.from_url url
         [node.id, node]
       end.to_h
     end
