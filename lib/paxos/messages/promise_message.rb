@@ -1,17 +1,17 @@
 module Paxos
   module Messages
     class PromiseMessage < BaseMessage
-      attr_reader :sequence_number, :key
+      attr_reader :key, :sequence_number
 
-      def initialize(sequence_number:, key:)
+      def initialize(key:, sequence_number:)
         @sequence_number  = sequence_number
         @key              = key
       end
 
       def to_h
         {
-          sequence_number: sequence_number,
-          key: key
+          key: key,
+          sequence_number: sequence_number
         }
       end
     end

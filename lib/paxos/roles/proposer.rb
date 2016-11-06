@@ -1,25 +1,19 @@
 module Paxos
   module Roles
     module Proposer
-      def request(key, value)
-        number = sequence_number key
-        session_store.set(key, sequence_number: number, value: value)
-        message = Messages::PrepareMessage.new key: key, sequence_number: number, value: value
+      def request(message)
+        number = sequence_number message.key
+        session_store.set(message.key, sequence_number: number, value: message.value)
+        prepare_message = Messages::PrepareMessage.new key: message.key, sequence_number: number, value: message.value
 
-        distributed.broadcast message
+        distributed.broadcast prepare_message
       end
 
-      def promise(sequence_number, key)
-        data = session_store.get(key)
-        return if data[:sequence_number] != sequence_number
+      def promise(message)
+        data = session_store.get(message.key)
+        return if data[:sequence_number] != message.sequence_number
 
-        data[:received_promise_number] = (data[:received_promise_number] || 0) + 1
-
-        if !data[:accepted] && quorum?(data)
-          accept_value data
-        else
-          session_store.set(key, data)
-        end
+        handle_promise message.key, data
       end
 
       private
@@ -29,6 +23,16 @@ module Paxos
         return number_value[:sequence_number] + 1 if number_value[:sequence_number]
 
         SequenceGenerator.new.generate_number
+      end
+
+      def handle_promise(key, data)
+        data[:received_promise_number] = (data[:received_promise_number] || 0) + 1
+
+        if !data[:accepted] && quorum?(data)
+          accept_value data
+        else
+          session_store.set(key, data)
+        end
       end
 
       def quorum?(data)

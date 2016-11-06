@@ -1,17 +1,17 @@
 module Paxos
   module Messages
     class AcceptMessage < BaseMessage
-      attr_reader :sequence_number, :key
+      attr_reader :key, :sequence_number
 
-      def initialize(sequence_number:, key:)
-        @sequence_number  = sequence_number
+      def initialize(key:, sequence_number:)
         @key              = key
+        @sequence_number  = sequence_number
       end
 
       def to_h
         {
-          sequence_number: sequence_number,
-          key: key
+          key: key,
+          sequence_number: sequence_number
         }
       end
     end
