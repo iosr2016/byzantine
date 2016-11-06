@@ -1,23 +1,11 @@
-ENV['RACK_ENV'] = 'test'
-
 if %w(1 true).include? ENV['COVERAGE']
   require 'simplecov'
   SimpleCov.start
 end
 
-require './config/environment'
-require './application'
-
-module ApplicationMixin
-  def app
-    Sinatra::Application
-  end
-end
+require 'byzantine'
 
 RSpec.configure do |config|
-  config.include Rack::Test::Methods
-  config.include ApplicationMixin
-
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
