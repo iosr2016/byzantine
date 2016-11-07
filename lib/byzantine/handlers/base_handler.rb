@@ -4,6 +4,7 @@ module Byzantine
       extend Forwardable
 
       attr_reader :context, :message
+
       def_delegators :context, :distributed, :data_store, :session_store, :node_id
 
       def initialize(context, message)

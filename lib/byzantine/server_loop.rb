@@ -1,31 +1,48 @@
+require 'socket'
+
 module Byzantine
   class ServerLoop
-    attr_reader :server, :context
+    extend Forwardable
 
-    def initialize(server, context)
-      @server = server
+    attr_reader :context
+
+    delegate node: :context
+
+    def initialize(context)
       @context = context
     end
 
     def start
-      loop { handle_client }
+      loop { handle_message }
     end
 
     private
 
-    def handle_client
+    def handle_message
       message = receive_message
-      message_handler.handle message
-
       $stdout.puts message
+
+      message_handler.handle message
     end
 
     def receive_message
-      client = server.accept
-      raw_message = client.gets.chomp!
-      client.close
+      raw_message = nil
+
+      accept_incoming do |client|
+        raw_message = client.gets.chomp!
+      end
 
       Marshal.load raw_message
+    end
+
+    def accept_incoming
+      client = server.accept
+      yield client
+      client.close
+    end
+
+    def server
+      @server ||= TCPServer.new node.port
     end
 
     def message_handler
