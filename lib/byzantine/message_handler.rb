@@ -1,7 +1,6 @@
 module Byzantine
   class MessageHandler
     attr_reader :context
-    UnknownMessageType = Class.new StandardError
 
     def initialize(context)
       @context = context
@@ -14,12 +13,11 @@ module Byzantine
     private
 
     def message_handler_for(message)
-      message_type = message.class.name.match('::(.*)Message').last
-      handler = "Handlers::#{message_type}Handler".safe_constantize
+      message_dispatcher.dispatch message
+    end
 
-      raise UnknownMessageType, "Unknown message type: #{message_type}" unless handler
-
-      handler.new context, message
+    def message_dispatcher
+      @message_dispatcher ||= MessageDispatcher.new context
     end
   end
 end

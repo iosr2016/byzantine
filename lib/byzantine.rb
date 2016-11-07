@@ -1,3 +1,4 @@
+require 'byzantine/utils'
 require 'byzantine/persistence/p_store'
 
 require 'byzantine/handlers/base_handler'
@@ -21,6 +22,7 @@ require 'byzantine/connector'
 require 'byzantine/distributed'
 require 'byzantine/context'
 require 'byzantine/message_handler'
+require 'byzantine/message_dispatcher'
 require 'byzantine/sequence_generator'
 
 require 'byzantine/server_loop'
