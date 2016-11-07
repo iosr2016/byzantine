@@ -11,11 +11,11 @@ module Byzantine
     end
 
     def broadcast(message)
-      nodes.each { |node| node.send message }
+      nodes.each { |node| send node, message }
     end
 
     def send(node, message)
-      node.send message
+      Connector.new(node).send message
     end
 
     def node_by_id(node_id)

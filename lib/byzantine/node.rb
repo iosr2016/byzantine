@@ -17,9 +17,5 @@ module Byzantine
     def id
       @id ||= Zlib.crc32 "#{host}:#{port}"
     end
-
-    def send(message)
-      Connector.new(self).send message
-    end
   end
 end
