@@ -1,7 +1,7 @@
 RSpec.describe Byzantine::Handlers::AcceptHandler do
   describe '#handle' do
-    let(:data_store) { instance_double Byzantine::Persistence::PStore }
-    let(:session_store) { instance_double Byzantine::Persistence::PStore, set: true }
+    let(:data_store) { instance_double Byzantine::Stores::PStore }
+    let(:session_store) { instance_double Byzantine::Stores::PStore, set: true }
     let(:context) { instance_double Byzantine::Context, data_store: data_store, session_store: session_store }
     let(:message) { Byzantine::Messages::AcceptMessage.new node_id: 1, key: 'key', sequence_number: 1 }
     subject(:accept_handler) { described_class.new context, message }

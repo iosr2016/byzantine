@@ -1,5 +1,5 @@
 require 'byzantine/utils'
-require 'byzantine/persistence/p_store'
+require 'byzantine/stores'
 
 require 'byzantine/handlers/base_handler'
 require 'byzantine/handlers/accept_handler'
@@ -16,7 +16,6 @@ require 'byzantine/messages/promise_message'
 require 'byzantine/messages/request_message'
 
 require 'byzantine/configuration'
-require 'byzantine/store_factory'
 require 'byzantine/node'
 require 'byzantine/connector'
 require 'byzantine/distributed'

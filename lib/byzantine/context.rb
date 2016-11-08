@@ -4,6 +4,8 @@ module Byzantine
 
     attr_reader :configuration
 
+    delegate store: :configuration
+
     def initialize(configuration)
       @configuration = configuration
     end
@@ -21,11 +23,11 @@ module Byzantine
     end
 
     def data_store
-      @data_store ||= store_factory.create :data
+      @data_store ||= store.new "#{node.id}_data"
     end
 
     def session_store
-      @session_store ||= store_factory.create :session_store
+      @session_store ||= store.new "#{node.id}_session"
     end
 
     def store_factory

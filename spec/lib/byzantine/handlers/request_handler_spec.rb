@@ -1,6 +1,6 @@
 RSpec.describe Byzantine::Handlers::RequestHandler do
   describe '#handle' do
-    let(:session_store) { instance_double Byzantine::Persistence::PStore, set: true }
+    let(:session_store) { instance_double Byzantine::Stores::PStore, set: true }
     let(:distributed) { instance_double Byzantine::Distributed, node_by_id: true, broadcast: true, nodes: [1, 2, 3] }
     let(:context) do
       instance_double Byzantine::Context, session_store: session_store, distributed: distributed, node_id: 1

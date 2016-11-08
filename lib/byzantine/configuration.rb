@@ -1,9 +1,9 @@
 module Byzantine
   class Configuration
-    attr_accessor :store_adapter, :url, :node_urls
+    attr_accessor :store, :url, :node_urls
 
     def initialize
-      @store_adapter = Persistence::PStore
+      @store = Stores::PStore
       @url = 'localhost:4000'
       @node_urls = []
     end
