@@ -1,3 +1,5 @@
+require 'forwardable'
+
 require 'byzantine/utils'
 require 'byzantine/stores'
 require 'byzantine/sequence_generator'
@@ -16,6 +18,8 @@ require 'byzantine/distributed'
 
 require 'byzantine/server_loop'
 require 'byzantine/server'
+
+require 'byzantine/cli'
 
 module Byzantine
 end
