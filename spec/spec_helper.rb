@@ -1,6 +1,12 @@
 if %w(1 true).include? ENV['COVERAGE']
   require 'simplecov'
-  SimpleCov.start
+  SimpleCov.start do
+    add_filter '/spec/'
+
+    add_group 'Handlers', 'lib/byzantine/handlers'
+    add_group 'Messages', 'lib/byzantine/messages'
+    add_group 'Stores', 'lib/byzantine/stores'
+  end
 end
 
 require 'byzantine'
