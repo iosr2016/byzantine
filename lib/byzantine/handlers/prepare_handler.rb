@@ -6,22 +6,30 @@ module Byzantine
       def handle
         data = session_store.get(key)
         last_sequence_number = data ? data[:sequence_number] : 0
-        return unless last_sequence_number < sequence_number
 
-        prepare_promise
+        message = if last_sequence_number < sequence_number
+                    prepare_promise
+                  else
+                    prepare_nack(last_sequence_number)
+                  end
+
+        send_message message
       end
 
       private
 
       def prepare_promise
         session_store.set(key, sequence_number: sequence_number, value: value)
-
-        node = distributed.node_by_id message.node_id
-        distributed.send node, promise_mesage
+        Messages::PromiseMessage.new(node_id: node_id, key: key, sequence_number: sequence_number)
       end
 
-      def promise_mesage
-        Messages::PromiseMessage.new(node_id: node_id, key: key, sequence_number: sequence_number)
+      def prepare_nack(last_sequence_number)
+        Messages::NackMessage.new(node_id: node_id, key: key, last_sequence_number: last_sequence_number)
+      end
+
+      def send_message(response_message)
+        node = distributed.node_by_id message.node_id
+        distributed.send node, response_message
       end
     end
   end

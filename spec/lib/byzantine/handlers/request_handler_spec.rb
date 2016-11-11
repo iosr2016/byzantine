@@ -10,8 +10,10 @@ RSpec.describe Byzantine::Handlers::RequestHandler do
     before { allow(session_store).to receive(:get).and_return(sequence_number: 0) }
 
     context 'with previous sequence_number' do
-      it 'does not call SequenceGenerator' do
-        expect(Byzantine::SequenceGenerator).not_to receive(:new)
+      let(:message) { Byzantine::Messages::RequestMessage.new node_id: 1, key: 'k', value: 1, last_sequence_number: 1 }
+
+      it 'calls SequenceGenerator' do
+        expect(Byzantine::SequenceGenerator).to receive_message_chain(:new, :generate_number)
         proposer.handle
       end
     end
