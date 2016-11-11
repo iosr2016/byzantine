@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module Byzantine
   class SequenceGenerator
     MAX_NUMBER = 100_000

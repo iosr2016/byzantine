@@ -2,3 +2,4 @@
 /.stores
 *.pstore
 /tmp
+*.hosts
