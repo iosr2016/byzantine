@@ -8,11 +8,11 @@ module Byzantine
       end
 
       def set(_key, _value)
-        raise NotImplementedError
+        raise NotImplementedError, 'Implement this method in derived class.'
       end
 
       def get(_key)
-        raise NotImplementedError
+        raise NotImplementedError, 'Implement this method in derived class.'
       end
     end
   end
