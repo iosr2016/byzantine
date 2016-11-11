@@ -15,7 +15,7 @@ module Byzantine
     end
 
     def node
-      @node ||= Node.from_url configuration.url
+      @node ||= Node.new configuration.host, configuration.queue_port
     end
 
     def distributed

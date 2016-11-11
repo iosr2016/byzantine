@@ -1,24 +1,10 @@
 require 'socket'
 
 module Byzantine
-  class ServerLoop
-    extend Forwardable
-
-    attr_reader :context
-
-    delegate node: :context
-
-    def initialize(context)
-      @context = context
-    end
-
-    def start
-      loop { handle_message }
-    end
-
+  class MessageQueue < BaseServer
     private
 
-    def handle_message
+    def handle_request
       message = receive_message
       $stdout.puts message
 
@@ -33,16 +19,6 @@ module Byzantine
       end
 
       Marshal.load raw_message
-    end
-
-    def accept_incoming
-      client = server.accept
-      yield client
-      client.close
-    end
-
-    def server
-      @server ||= TCPServer.new node.port
     end
 
     def message_handler

@@ -16,8 +16,10 @@ require 'byzantine/node'
 require 'byzantine/connector'
 require 'byzantine/distributed'
 
-require 'byzantine/server_loop'
+require 'byzantine/base_server'
+require 'byzantine/message_queue'
 require 'byzantine/server'
+require 'byzantine/runner'
 
 require 'byzantine/cli'
 
