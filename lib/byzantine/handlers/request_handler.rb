@@ -22,7 +22,7 @@ module Byzantine
 
       def read_last_sequence_number
         data = session_store.get(key)
-        return nil unless data || data[:sequence_number]
+        return nil unless data && data[:sequence_number]
 
         data[:sequence_number]
       end
