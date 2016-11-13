@@ -4,3 +4,17 @@ branches:
   only:
   - master
   - develop
+  - aws-deployment
+deploy:
+  provider: codedeploy
+  access_key_id: AKIAILYJA5BQUACJVQMA
+  secret_access_key:
+    secure: rdcC+LFOjYLQQ+q8kbHmMkd6GbBqbiv7UROBRGBhZYGtY/RO0EAdrVvEVT0wUsPN734+2IdUHj9iOjWxgSEe4tPRKSUHDE4U4W3TcNpZSRLAP8PYpcEYrldpsvkPpkxisXkT5V+VbnR3O92y4/cI9tk2yei4okoEoWzR2EBBG53iwkKR2v+yr0Zagu0M0D3F1NqZAhUqOiceuGyhbPsnxBUMsvu5zlXu70mvoc1AYr7M8avIADv2C3zwl+QAZbhi9LpaY106sitR7yeVTuDt38+WnhWXC0Q2cuvn7QIlunb0pZsELw0oSP9eoKGlAmcellWu5M0eRmXVOM4X3F7XwLHA71Bb2gSM8qwk/83MnrKD5yFkoEa3M5M9cjFXhOZDez2KeK9f0/kQDCZBUihbMD3xgBK4DUJLLvCcv/KkMp/wCCeMYvwFF2FpkFVGySqcDVhEo1zGULhZQzumwWVx09egMZDZNIO96LnSouSHE7EkCUDdM9E5sSoxtddTD/JpB5zyxMYgY120Y6pRWNeNdx9THy4SrkjVDJVJOinOvEnKzWP8wc02KWVVzfN1I7uREBBj2b7wGqR0W6bR7BTjumTpfGXPmSZBwkMhN5R3rEpOSJshnTVl03oGRpMWl4E2GtDnJgBFtDN3In9s2+rMQeW37bApUbfr42Iij66HXVM=
+  region: eu-west-1
+  application: byzantine
+  deployment_group: production
+  revision_type: github
+  wait-until-deployed: true
+  on:
+    repo: iosr2016/byzantine
+    branch: master

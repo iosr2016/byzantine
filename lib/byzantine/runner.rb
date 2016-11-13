@@ -26,7 +26,7 @@ module Byzantine
 
     def start
       handle_signals
-      pid_file.create pid
+      create_pid_file
     end
 
     def run_services
@@ -39,7 +39,7 @@ module Byzantine
     end
 
     def stop
-      pid_file.delete
+      delete_pid_file
     end
 
     def handle_signals
@@ -59,6 +59,14 @@ module Byzantine
         stop
         exit! 0
       end
+    end
+
+    def create_pid_file
+      pid_file.create pid if pid_file
+    end
+
+    def delete_pid_file
+      pid_file.delete if pid_file
     end
 
     def pid
