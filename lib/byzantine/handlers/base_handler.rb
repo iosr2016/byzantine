@@ -5,7 +5,7 @@ module Byzantine
 
       attr_reader :context, :message
 
-      def_delegators :context, :distributed, :data_store, :session_store, :node_id, :configuration
+      def_delegators :context, :distributed, :data_store, :session_store, :node_id, :fault_tolerance
 
       def initialize(context, message)
         @context = context

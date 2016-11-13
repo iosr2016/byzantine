@@ -16,7 +16,7 @@ module Byzantine
       private
 
       def faulty_quorum?(data)
-        data[:nack_count] > configuration.fault_tolerance
+        data[:nack_count] > context.fault_tolerance
       end
 
       def handle_nack(data)

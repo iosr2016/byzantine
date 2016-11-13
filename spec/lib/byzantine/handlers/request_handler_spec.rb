@@ -27,11 +27,6 @@ RSpec.describe Byzantine::Handlers::RequestHandler do
       end
     end
 
-    it 'call SessionStore set' do
-      expect(session_store).to receive(:set).with('key', sequence_number: 1, value: 1)
-      proposer.handle
-    end
-
     it 'creates PrepareMessage' do
       expect(Byzantine::Messages::PrepareMessage).to receive(:new)
         .with(node_id: 1, key: 'key', sequence_number: 1, value: 1)

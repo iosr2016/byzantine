@@ -5,9 +5,9 @@ RSpec.describe Byzantine::Handlers::PromiseHandler do
     let(:distributed) { instance_double Byzantine::Distributed, node_by_id: true, broadcast: true, nodes: [1, 2, 3] }
     let(:context) do
       instance_double Byzantine::Context, data_store: data_store, session_store: session_store,
-                                          distributed: distributed, node_id: 1
+                                          distributed: distributed, node_id: 1, fault_tolerance: 0
     end
-    let(:message) { Byzantine::Messages::PromiseMessage.new node_id: 1, key: 'key', sequence_number: 1 }
+    let(:message) { Byzantine::Messages::PromiseMessage.new node_id: 1, key: 'key', sequence_number: 1, value: 1 }
 
     subject(:promise_handler) { described_class.new context, message }
     before { allow(session_store).to receive(:get).and_return(sequence_number: 0) }
@@ -21,66 +21,72 @@ RSpec.describe Byzantine::Handlers::PromiseHandler do
       end
     end
 
-    context 'with proper sequence_number' do
-      before { allow(session_store).to receive(:get).and_return(sequence_number: 1) }
+    context 'with wrong value' do
+      before { allow(session_store).to receive(:get).and_return(sequence_number: 2, value: 2) }
+
+      it 'does not try to handle promise' do
+        expect(promise_handler).not_to receive(:handle_promise)
+        promise_handler.handle
+      end
+    end
+
+    context 'with proper sequence_number and value' do
+      before { allow(session_store).to receive(:get).and_return(sequence_number: 1, value: 1) }
 
       it 'tries to handle promise' do
         expect(promise_handler).to receive(:handle_promise)
         promise_handler.handle
       end
 
-      context 'when data is not accepted and there is no quorum' do
-        before { allow(session_store).to receive(:get).and_return(sequence_number: 1, value: 1, accepted: false) }
+      context 'when data is not accepted and there is no weak quorum' do
+        before do
+          allow(session_store).to receive(:get).and_return(sequence_number: 1, value: 1, strong_accepted: false)
+        end
 
-        it 'does not accept value' do
-          expect(promise_handler).not_to receive(:accept_value)
+        it 'does not make strong acceptance' do
+          expect(promise_handler).not_to receive(:strong_acceptance)
           promise_handler.handle
         end
 
         it 'calls SessionStore set' do
           expect(session_store).to receive(:set)
-            .with('key', sequence_number: 1, value: 1, accepted: false, received_promise_number: 1)
+            .with('key', sequence_number: 1, value: 1, strong_accepted: false, weak_accepted_count: 1)
           promise_handler.handle
         end
       end
 
-      context 'when data is accepted and there is quorum' do
+      context 'when data is accepted and there is weak quorum' do
         before do
           allow(session_store).to receive(:get)
-            .and_return(sequence_number: 1, value: 1, accepted: true, received_promise_number: 1)
+            .and_return(sequence_number: 1, value: 1, strong_accepted: true, weak_accepted_count: 1)
         end
 
-        it 'does not accept value' do
-          expect(promise_handler).not_to receive(:accept_value)
+        it 'does not make strong acceptance' do
+          expect(promise_handler).not_to receive(:strong_acceptance)
           promise_handler.handle
         end
 
         it 'calls SessionStore set' do
           expect(session_store).to receive(:set)
-            .with('key', sequence_number: 1, value: 1, accepted: true, received_promise_number: 2)
+            .with('key', sequence_number: 1, value: 1, strong_accepted: true, weak_accepted_count: 2)
           promise_handler.handle
         end
       end
 
-      context 'when data is not accepted and there is quorum' do
+      context 'when data is not accepted and there is weak quorum' do
         before do
           allow(session_store).to receive(:get)
-            .and_return(sequence_number: 1, value: 1, accepted: false, received_promise_number: 1)
+            .and_return(sequence_number: 1, value: 1, strong_accepted: false, weak_accepted_count: 1)
         end
 
-        it 'accepts value' do
-          expect(promise_handler).to receive(:accept_value).with(Hash)
+        it 'makes strong acceptance' do
+          expect(promise_handler).to receive(:strong_acceptance).with(Hash)
           promise_handler.handle
         end
 
         it 'calls SessionStore set' do
           expect(session_store).to receive(:set)
-            .with('key', sequence_number: 1, value: 1, accepted: true, received_promise_number: 2)
-          promise_handler.handle
-        end
-
-        it 'calls DataStore set' do
-          expect(data_store).to receive(:set).with('key', 1)
+            .with('key', sequence_number: 1, value: 1, strong_accepted: true, weak_accepted_count: 2)
           promise_handler.handle
         end
 

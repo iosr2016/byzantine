@@ -23,7 +23,7 @@ module Byzantine
       end
 
       def strong_quorum?(data)
-        data[:strong_accepted_count] > (distributed.nodes.count + 3 * configuration.fault_tolerance) / 2
+        data[:strong_accepted_count] > (distributed.nodes.count + 3 * context.fault_tolerance) / 2
       end
 
       def decide(data)

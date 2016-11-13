@@ -4,7 +4,7 @@ module Byzantine
 
     attr_reader :configuration
 
-    delegate store: :configuration
+    def_delegators :configuration, :store, :fault_tolerance
 
     def initialize(configuration)
       @configuration = configuration

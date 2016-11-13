@@ -1,8 +1,12 @@
 RSpec.describe Byzantine::Handlers::AcceptHandler do
   describe '#handle' do
-    let(:data_store) { instance_double Byzantine::Stores::PStore }
+    let(:data_store) { instance_double Byzantine::Stores::PStore, set: true }
     let(:session_store) { instance_double Byzantine::Stores::PStore, set: true }
-    let(:context) { instance_double Byzantine::Context, data_store: data_store, session_store: session_store }
+    let(:distributed) { instance_double Byzantine::Distributed, node_by_id: true, broadcast: true, nodes: [1, 2, 3] }
+    let(:context) do
+      instance_double Byzantine::Context, data_store: data_store, session_store: session_store,
+                                          distributed: distributed, fault_tolerance: 0
+    end
     let(:message) { Byzantine::Messages::AcceptMessage.new node_id: 1, key: 'key', sequence_number: 1 }
     subject(:accept_handler) { described_class.new context, message }
 
@@ -18,9 +22,65 @@ RSpec.describe Byzantine::Handlers::AcceptHandler do
     context 'with proper sequence_number' do
       before { allow(session_store).to receive(:get).and_return(sequence_number: 1, value: 1) }
 
-      it 'sets values in DataStore' do
-        expect(data_store).to receive(:set).with('key', 1)
+      it 'tries to handle accept' do
+        expect(accept_handler).to receive(:handle_accept)
         accept_handler.handle
+      end
+
+      context 'when data is not decided and there is no strong quorum' do
+        before { allow(session_store).to receive(:get).and_return(sequence_number: 1, value: 1, decided: false) }
+
+        it 'does not decide' do
+          expect(accept_handler).not_to receive(:decide)
+          accept_handler.handle
+        end
+
+        it 'calls SessionStore set' do
+          expect(session_store).to receive(:set)
+            .with('key', sequence_number: 1, value: 1, decided: false, strong_accepted_count: 1)
+          accept_handler.handle
+        end
+      end
+
+      context 'when data is decided and there is strong quorum' do
+        before do
+          allow(session_store).to receive(:get)
+            .and_return(sequence_number: 1, value: 1, decided: true, strong_accepted_count: 1)
+        end
+
+        it 'does not decide' do
+          expect(accept_handler).not_to receive(:decide)
+          accept_handler.handle
+        end
+
+        it 'calls SessionStore set' do
+          expect(session_store).to receive(:set)
+            .with('key', sequence_number: 1, value: 1, decided: true, strong_accepted_count: 2)
+          accept_handler.handle
+        end
+      end
+
+      context 'when data is not decided and there is strong quorum' do
+        before do
+          allow(session_store).to receive(:get)
+            .and_return(sequence_number: 1, value: 1, decided: false, strong_accepted_count: 1)
+        end
+
+        it 'decides' do
+          expect(accept_handler).to receive(:decide).with(Hash)
+          accept_handler.handle
+        end
+
+        it 'calls SessionStore set' do
+          expect(session_store).to receive(:set)
+            .with('key', sequence_number: 1, value: 1, decided: true, strong_accepted_count: 2)
+          accept_handler.handle
+        end
+
+        it 'calls DataStore set' do
+          expect(data_store).to receive(:set).with('key', 1)
+          accept_handler.handle
+        end
       end
     end
   end
