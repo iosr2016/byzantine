@@ -6,28 +6,30 @@ module Byzantine
       def handle
         data = session_store.get(key)
         last_sequence_number = data ? data[:sequence_number] : 0
-
-        message = if last_sequence_number < sequence_number
-                    prepare_promise
-                  else
-                    prepare_nack(last_sequence_number)
-                  end
-
-        send_message message
+        if last_sequence_number < sequence_number
+          weak_acceptance
+        else
+          reject_prepare(last_sequence_number)
+        end
       end
 
       private
 
-      def prepare_promise
+      def weak_acceptance
         session_store.set(key, sequence_number: sequence_number, value: value)
-        Messages::PromiseMessage.new(node_id: node_id, key: key, sequence_number: sequence_number)
+        promise_message = prepare_promise
+
+        distributed.broadcast promise_message
       end
 
-      def prepare_nack(last_sequence_number)
-        Messages::NackMessage.new(node_id: node_id, key: key, last_sequence_number: last_sequence_number)
+      def prepare_promise
+        Messages::PromiseMessage.new(node_id: node_id, key: key, sequence_number: sequence_number, value: value)
       end
 
-      def send_message(response_message)
+      def reject_prepare(last_sequence_number)
+        response_message = Messages::NackMessage.new(node_id: node_id, key: key,
+                                                     last_sequence_number: last_sequence_number)
+
         node = distributed.node_by_id message.node_id
         distributed.send node, response_message
       end
