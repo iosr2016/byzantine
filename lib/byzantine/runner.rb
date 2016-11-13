@@ -11,6 +11,7 @@ module Byzantine
     end
 
     def start
+      $stdout.puts context.node_id
       [
         Thread.new { start_message_queue },
         Thread.new { start_client_server }
