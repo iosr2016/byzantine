@@ -30,8 +30,9 @@ module Byzantine
     end
 
     def read_hosts(hosts_file)
-      return [] unless hosts_file
+      return [] unless hosts_file || File.exist?(HOSTS_FILE_PATH)
 
+      hosts_file ||= HOSTS_FILE_PATH
       File.readlines(hosts_file).map(&:strip)
     end
   end
