@@ -33,5 +33,9 @@ module Byzantine
     def store_factory
       @store_factory ||= StoreFactory.new configuration
     end
+
+    def message_buffer
+      @message_buffer ||= MessageBuffer.new
+    end
   end
 end
