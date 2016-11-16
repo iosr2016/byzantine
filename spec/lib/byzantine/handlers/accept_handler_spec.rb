@@ -67,7 +67,7 @@ RSpec.describe Byzantine::Handlers::AcceptHandler do
         end
 
         it 'decides' do
-          expect(accept_handler).to receive(:decide).with(Hash)
+          expect(accept_handler).to receive(:decide)
           accept_handler.handle
         end
 

@@ -3,9 +3,10 @@ RSpec.describe Byzantine::Handlers::PromiseHandler do
     let(:data_store) { instance_double Byzantine::Stores::PStore, set: true }
     let(:session_store) { instance_double Byzantine::Stores::PStore, set: true }
     let(:distributed) { instance_double Byzantine::Distributed, node_by_id: true, broadcast: true, nodes: [1, 2, 3] }
+    let(:message_buffer) { instance_double Byzantine::MessageBuffer, flush: [] }
     let(:context) do
-      instance_double Byzantine::Context, data_store: data_store, session_store: session_store,
-                                          distributed: distributed, node_id: 1, fault_tolerance: 0
+      instance_double Byzantine::Context, data_store: data_store, session_store: session_store, node_id: 1,
+                                          distributed: distributed, fault_tolerance: 0, message_buffer: message_buffer
     end
     let(:message) { Byzantine::Messages::PromiseMessage.new node_id: 1, key: 'key', sequence_number: 1, value: 1 }
 
@@ -80,7 +81,7 @@ RSpec.describe Byzantine::Handlers::PromiseHandler do
         end
 
         it 'makes strong acceptance' do
-          expect(promise_handler).to receive(:strong_acceptance).with(Hash)
+          expect(promise_handler).to receive(:strong_acceptance)
           promise_handler.handle
         end
 

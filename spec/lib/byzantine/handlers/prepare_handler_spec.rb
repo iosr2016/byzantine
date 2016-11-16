@@ -2,8 +2,10 @@ RSpec.describe Byzantine::Handlers::PrepareHandler do
   describe '#handle' do
     let(:session_store) { instance_double Byzantine::Stores::PStore, set: true }
     let(:distributed) { instance_double Byzantine::Distributed, node_by_id: true, send: true, broadcast: true }
+    let(:message_buffer) { instance_double Byzantine::MessageBuffer, flush: [] }
     let(:context) do
-      instance_double Byzantine::Context, session_store: session_store, distributed: distributed, node_id: 1
+      instance_double Byzantine::Context, session_store: session_store, distributed: distributed, node_id: 1,
+                                          message_buffer: message_buffer
     end
     let(:message) { Byzantine::Messages::PrepareMessage.new node_id: 1, key: 'key', sequence_number: 1, value: 1 }
     subject(:prepare_handler) { described_class.new context, message }
