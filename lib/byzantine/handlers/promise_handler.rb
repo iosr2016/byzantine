@@ -32,7 +32,7 @@ module Byzantine
 
         distributed.broadcast accept_message
 
-        buffered_messages = message_buffer.flush(accept_message.class)
+        buffered_messages = message_buffer.flush(key, accept_message.class)
         buffered_messages.each { |m| message_handler.handle(m) }
       end
     end

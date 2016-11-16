@@ -4,7 +4,7 @@ module Byzantine
       attr_reader :buffer
 
       def initialize
-        @buffer = Hash.new []
+        @buffer = {}
       end
 
       def set(key, value)

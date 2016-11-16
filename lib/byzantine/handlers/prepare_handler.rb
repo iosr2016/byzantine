@@ -17,16 +17,17 @@ module Byzantine
 
       def weak_acceptance
         session_store.set(key, sequence_number: sequence_number, value: value)
-        promise_message = prepare_promise
 
-        distributed.broadcast promise_message
-
-        buffered_messages = message_buffer.flush(promise_message.class)
-        buffered_messages.each { |m| message_handler.handle(m) }
+        send_promise
       end
 
-      def prepare_promise
-        Messages::PromiseMessage.new(node_id: node_id, key: key, sequence_number: sequence_number, value: value)
+      def send_promise
+        promise_message = Messages::PromiseMessage.new(node_id: node_id, key: key, sequence_number: sequence_number,
+                                                       value: value)
+        distributed.broadcast promise_message
+
+        buffered_messages = message_buffer.flush(key, promise_message.class)
+        buffered_messages.each { |m| message_handler.handle(m) }
       end
 
       def reject_prepare(last_sequence_number)
