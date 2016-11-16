@@ -20,6 +20,9 @@ module Byzantine
         promise_message = prepare_promise
 
         distributed.broadcast promise_message
+
+        buffered_messages = message_buffer.flush(promise_message.class)
+        buffered_messages.each { |m| message_handler.handle(m) }
       end
 
       def prepare_promise

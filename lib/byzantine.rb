@@ -6,6 +6,7 @@ require 'byzantine/sequence_generator'
 
 require 'byzantine/messages'
 require 'byzantine/handlers'
+require 'byzantine/message_buffer'
 require 'byzantine/message_handler'
 require 'byzantine/message_dispatcher'
 

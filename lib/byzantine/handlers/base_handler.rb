@@ -5,7 +5,7 @@ module Byzantine
 
       attr_reader :context, :message
 
-      def_delegators :context, :distributed, :data_store, :session_store, :node_id, :fault_tolerance
+      def_delegators :context, :distributed, :data_store, :session_store, :node_id, :fault_tolerance, :message_buffer
 
       def initialize(context, message)
         @context = context
@@ -14,6 +14,10 @@ module Byzantine
 
       def handle
         raise NotImplementedError, 'Implement this method in derived class.'
+      end
+
+      def message_handler
+        @message_handler ||= MessageHandler.new context
       end
     end
   end
