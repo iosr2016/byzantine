@@ -2,7 +2,11 @@ require 'socket'
 
 module Byzantine
   class BaseServer
+    extend Forwardable
+
     attr_reader :context, :port
+
+    def_delegators :context, :logger
 
     def initialize(context, port)
       @context  = context

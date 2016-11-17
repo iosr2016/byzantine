@@ -7,8 +7,11 @@ module Byzantine
 
     def handle_request
       accept_incoming do |client|
-        request   = parse_request client.gets.chomp!
-        response  = send "handle_#{request[:type]}", request
+        request = parse_request client.gets.chomp!
+        logger.info "Request #{request}"
+
+        response = send "handle_#{request[:type]}", request
+        logger.info "Response #{response}"
 
         client.puts response.to_json
       end

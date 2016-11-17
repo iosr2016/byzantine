@@ -1,7 +1,7 @@
 module Byzantine
   class Configuration
     attr_accessor :store_adapter, :host, :client_port, :queue_port, :node_urls,
-                  :fault_tolerance, :pid_file
+                  :fault_tolerance, :pid_file, :log_file
 
     def initialize
       @store_adapter    = Stores::PStore
@@ -10,6 +10,7 @@ module Byzantine
       @queue_port       = 4_001
       @node_urls        = []
       @fault_tolerance  = 0
+      @log_file         = STDOUT
     end
 
     def pid_file=(path)

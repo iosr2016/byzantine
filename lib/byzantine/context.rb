@@ -1,3 +1,5 @@
+require 'logger'
+
 module Byzantine
   class Context
     extend Forwardable
@@ -32,6 +34,10 @@ module Byzantine
 
     def message_buffer
       @message_buffer ||= MessageBuffer.new
+    end
+
+    def logger
+      @logger ||= Logger.new configuration.log_file
     end
   end
 end

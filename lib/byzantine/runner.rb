@@ -4,7 +4,8 @@ module Byzantine
 
     attr_reader :configuration
 
-    def_delegators :configuration, :pid_file
+    def_delegators :configuration, :pid_file, :queue_port, :client_port
+    def_delegators :context, :node, :logger
 
     def initialize
       @configuration = Configuration.new
@@ -15,8 +16,6 @@ module Byzantine
     end
 
     def run
-      $stdout.puts context.node_id
-
       start
       run_services
       stop
@@ -25,6 +24,9 @@ module Byzantine
     private
 
     def start
+      logger.info 'Starting Byzantine instance'
+      logger.info "Node host: #{node.host} port: #{node.port} id: #{node.id}"
+
       handle_signals
       create_pid_file
     end
@@ -39,6 +41,7 @@ module Byzantine
     end
 
     def stop
+      logger.info 'Stopping Byzantine instance'
       delete_pid_file
     end
 
@@ -74,11 +77,13 @@ module Byzantine
     end
 
     def start_message_queue
-      MessageQueue.new(context, context.configuration.queue_port).start
+      logger.info "Message queue bound to port #{queue_port}"
+      MessageQueue.new(context, queue_port).start
     end
 
     def start_client_server
-      Server.new(context, context.configuration.client_port).start
+      logger.info "Client server bound to port #{client_port}"
+      Server.new(context, client_port).start
     end
 
     def context

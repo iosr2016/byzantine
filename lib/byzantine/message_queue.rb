@@ -6,8 +6,7 @@ module Byzantine
 
     def handle_request
       message = receive_message
-      $stdout.puts message
-
+      log_message_handling message
       message_handler.handle message
     end
 
@@ -19,6 +18,13 @@ module Byzantine
       end
 
       Marshal.load raw_message
+    end
+
+    def log_message_handling(message)
+      logger.info 'Message ' \
+                  "type: #{message.class} " \
+                  "node id: #{message.node_id} " \
+                  "key: #{message.key}"
     end
 
     def message_handler
