@@ -11,7 +11,11 @@ module Byzantine
     end
 
     def broadcast(message)
-      nodes.each { |node| send node, message }
+      threads = nodes.map do |node|
+        Thread.new { send node, message }
+      end
+
+      threads.each(&:join)
     end
 
     def send(node, message)
