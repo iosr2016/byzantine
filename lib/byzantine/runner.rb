@@ -62,11 +62,11 @@ module Byzantine
     end
 
     def create_pid_file
-      pid_file.create pid if pid_file
+      pid_file&.create pid
     end
 
     def delete_pid_file
-      pid_file.delete if pid_file
+      pid_file&.delete
     end
 
     def pid

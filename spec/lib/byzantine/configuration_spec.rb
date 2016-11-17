@@ -1,7 +1,6 @@
 RSpec.describe Byzantine::Configuration do
   describe 'getters' do
-    it { is_expected.to respond_to :data_store_type }
-    it { is_expected.to respond_to :session_store_type }
+    it { is_expected.to respond_to :store_adapter }
     it { is_expected.to respond_to :host }
     it { is_expected.to respond_to :client_port }
     it { is_expected.to respond_to :queue_port }
@@ -9,8 +8,7 @@ RSpec.describe Byzantine::Configuration do
   end
 
   describe 'setters' do
-    it { is_expected.to respond_to :data_store_type= }
-    it { is_expected.to respond_to :session_store_type= }
+    it { is_expected.to respond_to :store_adapter= }
     it { is_expected.to respond_to :host= }
     it { is_expected.to respond_to :client_port= }
     it { is_expected.to respond_to :queue_port= }
@@ -20,12 +18,8 @@ RSpec.describe Byzantine::Configuration do
   describe '#initialize' do
     subject(:configuration) { described_class.new }
 
-    it 'assigns default data_store_type value' do
-      expect(configuration.instance_variable_get(:@data_store_type)).to eq(Byzantine::Stores::PStore)
-    end
-
-    it 'assigns default session_store_type value' do
-      expect(configuration.instance_variable_get(:@session_store_type)).to eq(Byzantine::Stores::HashStore)
+    it 'assigns default store_adapter value' do
+      expect(configuration.instance_variable_get(:@store_adapter)).to eq(Byzantine::Stores::PStore)
     end
 
     it 'assigns default host value' do
