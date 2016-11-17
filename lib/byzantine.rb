@@ -1,6 +1,7 @@
 require 'forwardable'
 
 require 'byzantine/utils'
+require 'byzantine/errors'
 require 'byzantine/stores'
 require 'byzantine/sequence_generator'
 require 'byzantine/pid_file'

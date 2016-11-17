@@ -1,7 +1,5 @@
 module Byzantine
   class MessageDispatcher
-    UnknownMessageType = Class.new StandardError
-
     attr_reader :context
 
     def initialize(context)
@@ -20,7 +18,7 @@ module Byzantine
     private
 
     def raise_unknown_message_type(message)
-      raise UnknownMessageType, "Unknown message type: #{message.class}"
+      raise Errors::UnknownMessageType, "Unknown message type: #{message.class}"
     end
   end
 end
