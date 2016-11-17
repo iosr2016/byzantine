@@ -4,7 +4,7 @@ module Byzantine
 
     attr_reader :configuration
 
-    delegate pid_file: :configuration
+    def_delegators :configuration, :pid_file
 
     def initialize
       @configuration = Configuration.new

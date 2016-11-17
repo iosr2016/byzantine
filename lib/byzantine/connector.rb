@@ -6,7 +6,7 @@ module Byzantine
 
     attr_reader :node
 
-    delegate %i(host port) => :node
+    def_delegators :node, :host, :port
 
     def initialize(node)
       @node = node

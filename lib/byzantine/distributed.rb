@@ -4,7 +4,7 @@ module Byzantine
 
     attr_reader :configuration
 
-    delegate node_urls: :configuration
+    def_delegators :configuration, :node_urls
 
     def initialize(configuration)
       @configuration = configuration
