@@ -19,7 +19,6 @@ module Byzantine
 
     private
 
-    # rubocop:disable Metrics/AbcSize
     def configure(runner)
       runner.configure do |config|
         config.host            = config_options[:host]
