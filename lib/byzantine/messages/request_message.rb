@@ -1,12 +1,11 @@
 module Byzantine
   module Messages
     class RequestMessage < BaseMessage
-      attr_reader :value, :last_sequence_number
+      attr_reader :value
 
-      def initialize(node_id:, key:, value:, last_sequence_number: nil)
+      def initialize(node_id:, key:, value:)
         super node_id: node_id, key: key
-        @value                = value
-        @last_sequence_number = last_sequence_number
+        @value = value
       end
     end
   end

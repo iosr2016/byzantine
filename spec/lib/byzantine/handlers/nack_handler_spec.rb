@@ -37,13 +37,12 @@ RSpec.describe Byzantine::Handlers::NackHandler do
 
       it 'calls SessionStore set' do
         expect(session_store).to receive(:set)
-          .with('key', nack_count: 0, max_nack_sequence_number: message.last_sequence_number)
+          .with('key', nack_count: 0, last_sequence_number: message.last_sequence_number)
         nack_handler.handle
       end
 
       it 'creates new request message' do
-        expect(Byzantine::Messages::RequestMessage).to receive(:new)
-          .with(node_id: 1, key: 'key', value: nil, last_sequence_number: 1)
+        expect(Byzantine::Messages::RequestMessage).to receive(:new).with(node_id: 1, key: 'key', value: nil)
         nack_handler.handle
       end
 

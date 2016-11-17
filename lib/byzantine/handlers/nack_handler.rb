@@ -15,7 +15,7 @@ module Byzantine
       private
 
       def max_nack_sequence_number
-        [session_data[:last_sequence_number], last_sequence_number].compact.max
+        [session_data[:max_nack_sequence_number], last_sequence_number].compact.max
       end
 
       def reject_quorum?
@@ -23,9 +23,10 @@ module Byzantine
       end
 
       def handle_nack
-        session_data[:nack_count] = 0
-        message = Messages::RequestMessage.new(node_id: node_id, key: key, value: session_data[:value],
-                                               last_sequence_number: session_data[:max_nack_sequence_number])
+        session_data[:nack_count]           = 0
+        session_data[:last_sequence_number] = session_data.delete(:max_nack_sequence_number)
+
+        message = Messages::RequestMessage.new(node_id: node_id, key: key, value: session_data[:value])
         Handlers::RequestHandler.new(context, message).handle
       end
     end

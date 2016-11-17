@@ -1,7 +1,7 @@
 module Byzantine
   module Handlers
     class RequestHandler < BaseHandler
-      def_delegators :message, :key, :last_sequence_number, :value
+      def_delegators :message, :key, :value
 
       def handle
         number = create_sequence_number
@@ -13,16 +13,18 @@ module Byzantine
       private
 
       def create_sequence_number
-        previous_number = last_sequence_number || read_last_sequence_number
-        generator = SequenceGenerator.new base_number: previous_number
+        generator = SequenceGenerator.new base_number: last_sequence_number
 
         generator.generate_number
       end
 
-      def read_last_sequence_number
-        return nil unless session_data && session_data[:sequence_number]
+      def last_sequence_number
+        sequence_numbers = []
 
-        session_data[:sequence_number]
+        sequence_numbers << session_data[:sequence_number]
+        sequence_numbers << session_data[:last_sequence_number]
+
+        sequence_numbers.compact.max
       end
     end
   end
