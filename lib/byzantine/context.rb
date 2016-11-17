@@ -29,7 +29,7 @@ module Byzantine
     end
 
     def session_store
-      @session_store ||= Stores::HashStore.new "#{node.id}_session"
+      @session_store ||= Stores::HashStore.new data_store.to_json
     end
 
     def message_buffer

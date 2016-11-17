@@ -3,7 +3,7 @@ module Byzantine
     attr_reader :store
 
     def initialize
-      @store = Stores::HashStore.new 'message_buffer'
+      @store = Stores::HashStore.new
     end
 
     def push(message)

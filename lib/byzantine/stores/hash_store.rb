@@ -3,9 +3,8 @@ module Byzantine
     class HashStore < BaseStore
       attr_reader :buffer
 
-      def initialize(name)
-        super
-        @buffer = {}
+      def initialize(buffer = {})
+        @buffer = buffer
       end
 
       def set(key, value)
