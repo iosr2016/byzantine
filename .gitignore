@@ -3,3 +3,4 @@
 *.pstore
 /tmp
 *.hosts
+*.pid

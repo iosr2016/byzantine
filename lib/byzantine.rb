@@ -3,6 +3,7 @@ require 'forwardable'
 require 'byzantine/utils'
 require 'byzantine/stores'
 require 'byzantine/sequence_generator'
+require 'byzantine/pid_file'
 
 require 'byzantine/messages'
 require 'byzantine/handlers'

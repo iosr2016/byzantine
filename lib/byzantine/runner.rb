@@ -1,6 +1,10 @@
 module Byzantine
   class Runner
+    extend Forwardable
+
     attr_reader :configuration
+
+    delegate pid_file: :configuration
 
     def initialize
       @configuration = Configuration.new
@@ -10,18 +14,55 @@ module Byzantine
       yield configuration
     end
 
-    def start
+    def run
       $stdout.puts context.node_id
-      [
-        Thread.new { start_message_queue },
-        Thread.new { start_client_server }
-      ].each(&:join)
+
+      start
+      run_services
+      stop
     end
 
     private
 
-    def context
-      @context ||= Context.new configuration
+    def start
+      handle_signals
+      pid_file.create pid
+    end
+
+    def run_services
+      threads = [
+        Thread.new { start_message_queue },
+        Thread.new { start_client_server }
+      ]
+
+      threads.each(&:join)
+    end
+
+    def stop
+      pid_file.delete
+    end
+
+    def handle_signals
+      handle_int_signal
+      handle_quit_signal
+    end
+
+    def handle_int_signal
+      Signal.trap('INT') do
+        stop
+        exit! 1
+      end
+    end
+
+    def handle_quit_signal
+      Signal.trap('QUIT') do
+        stop
+        exit! 0
+      end
+    end
+
+    def pid
+      Process.pid
     end
 
     def start_message_queue
@@ -30,6 +71,10 @@ module Byzantine
 
     def start_client_server
       Server.new(context, context.configuration.client_port).start
+    end
+
+    def context
+      @context ||= Context.new configuration
     end
   end
 end

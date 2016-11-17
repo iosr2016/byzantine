@@ -8,22 +8,25 @@ module Byzantine
     method_option :port,            type: :numeric, default: 4_000
     method_option :fault_tolerance, type: :numeric, default: 0
     method_option :nodes_file,      type: :string
+    method_option :pid_file,        type: :string
     method_option :config_file,     type: :string
 
     def start
       runner = Runner.new
       configure runner
-      runner.start
+      runner.run
     end
 
     private
 
+    # rubocop:disable Metrics/AbcSize
     def configure(runner)
       runner.configure do |config|
         config.host            = config_options[:host]
         config.client_port     = config_options[:port]
         config.queue_port      = config_options[:port] + 1
         config.fault_tolerance = config_options[:fault_tolerance]
+        config.pid_file        = config_options[:pid_file] if config_options.key? :pid_file
         config.node_urls       = node_urls
       end
     end
