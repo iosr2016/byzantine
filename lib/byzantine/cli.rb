@@ -1,39 +1,53 @@
 require 'thor'
+require 'yaml'
 
 module Byzantine
   class CLI < Thor
-    HOSTS_FILE_PATH = '.byzantine.hosts'.freeze
-
     desc 'start', 'Starts data store instance'
     method_option :host,            type: :string,  default: 'localhost'
     method_option :port,            type: :numeric, default: 4_000
     method_option :fault_tolerance, type: :numeric, default: 0
-    method_option :hosts_file,      type: :string
+    method_option :nodes_file,      type: :string
+    method_option :config_file,     type: :string
 
     def start
       runner = Runner.new
-      config_runner runner
-
+      configure runner
       runner.start
     end
 
     private
 
-    def config_runner(runner)
+    def configure(runner)
       runner.configure do |config|
-        config.host             = options[:host]
-        config.client_port      = options[:port]
-        config.queue_port       = options[:port] + 1
-        config.fault_tolerance  = options[:fault_tolerance]
-        config.node_urls        = read_hosts(options[:hosts_file])
+        config.host            = config_options[:host]
+        config.client_port     = config_options[:port]
+        config.queue_port      = config_options[:port] + 1
+        config.fault_tolerance = config_options[:fault_tolerance]
+        config.node_urls       = node_urls
       end
     end
 
-    def read_hosts(hosts_file)
-      return [] unless hosts_file || File.exist?(HOSTS_FILE_PATH)
+    def node_urls
+      if config_options.key? :node_urls
+        config_options[:node_urls]
+      elsif config_options.key? :nodes_file
+        node_urls_from_file config_options[:nodes_file]
+      else
+        []
+      end
+    end
 
-      hosts_file ||= HOSTS_FILE_PATH
-      File.readlines(hosts_file).map(&:strip)
+    def config_options
+      Utils.symbolize_keys(options[:config_file] ? config_from_file : options)
+    end
+
+    def config_from_file
+      YAML.load(File.read(options[:config_file]))
+    end
+
+    def node_urls_from_file(file_path)
+      File.readlines(file_path).map(&:strip)
     end
   end
 end
