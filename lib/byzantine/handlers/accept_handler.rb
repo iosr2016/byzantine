@@ -29,7 +29,7 @@ module Byzantine
       def decide
         @data[:decided] = true
 
-        data_store.set(key, @data[:value])
+        data_store.set(key, value: @data[:value], sequence_number: sequence_number)
         session_store.set(key, @data)
       end
     end

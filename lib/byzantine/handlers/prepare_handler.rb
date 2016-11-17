@@ -4,8 +4,8 @@ module Byzantine
       def_delegators :message, :key, :sequence_number, :value
 
       def handle
-        data = session_store.get(key)
-        last_sequence_number = data ? data[:sequence_number] : 0
+        data = session_store.get(key) || data_store.get(key)
+        last_sequence_number = data && data[:sequence_number] ? data[:sequence_number] : 0
         if last_sequence_number < sequence_number
           weak_acceptance
         else

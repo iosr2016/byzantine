@@ -2,7 +2,8 @@ module Byzantine
   module Handlers
     class GetHandler < BaseHandler
       def handle
-        data_store.get message.key
+        data = data_store.get message.key || {}
+        data[:value]
       end
     end
   end

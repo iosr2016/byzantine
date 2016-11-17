@@ -19,9 +19,11 @@ module Byzantine
     end
 
     def handle_get(request)
+      data = context.data_store.get(request[:key]) || {}
+
       {
         key:    request[:key],
-        value:  context.data_store.get(request[:key])
+        value:  data[:value]
       }
     end
 

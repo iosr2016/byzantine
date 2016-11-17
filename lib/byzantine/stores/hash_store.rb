@@ -1,9 +1,10 @@
 module Byzantine
   module Stores
-    class HashStore
+    class HashStore < BaseStore
       attr_reader :buffer
 
-      def initialize
+      def initialize(name)
+        super
         @buffer = {}
       end
 

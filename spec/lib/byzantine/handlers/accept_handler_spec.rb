@@ -78,7 +78,7 @@ RSpec.describe Byzantine::Handlers::AcceptHandler do
         end
 
         it 'calls DataStore set' do
-          expect(data_store).to receive(:set).with('key', 1)
+          expect(data_store).to receive(:set).with('key', value: 1, sequence_number: 1)
           accept_handler.handle
         end
       end

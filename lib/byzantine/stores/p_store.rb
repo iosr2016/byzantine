@@ -5,10 +5,8 @@ module Byzantine
     class PStore < BaseStore
       STORE_DIR = '.db'.freeze
 
-      attr_reader :name
-
       def initialize(name)
-        @name = name
+        super
         ensure_store_dir
       end
 

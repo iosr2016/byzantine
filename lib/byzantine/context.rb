@@ -4,7 +4,7 @@ module Byzantine
 
     attr_reader :configuration
 
-    def_delegators :configuration, :store, :fault_tolerance
+    def_delegators :configuration, :data_store_type, :session_store_type, :fault_tolerance
 
     def initialize(configuration)
       @configuration = configuration
@@ -23,11 +23,11 @@ module Byzantine
     end
 
     def data_store
-      @data_store ||= store.new "#{node.id}_data"
+      @data_store ||= data_store_type.new "#{node.id}_data"
     end
 
     def session_store
-      @session_store ||= store.new "#{node.id}_session"
+      @session_store ||= session_store_type.new "#{node.id}_session"
     end
 
     def store_factory

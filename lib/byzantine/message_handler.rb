@@ -21,7 +21,7 @@ module Byzantine
     def can_handle?(message)
       return true unless BUFFERED_MESSAGE_TYPES.include?(Utils.demodulize(message.class))
 
-      data = context.session_store.get message.key
+      data = context.session_store.get(message.key) || {}
 
       data[:sequence_number] && data[:sequence_number] >= message.sequence_number
     end

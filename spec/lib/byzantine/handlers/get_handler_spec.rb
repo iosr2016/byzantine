@@ -6,7 +6,7 @@ RSpec.describe Byzantine::Handlers::GetHandler do
     subject(:get_handler) { described_class.new context, message }
 
     it 'calls data_store get' do
-      expect(data_store).to receive(:get).with('test_key')
+      expect(data_store).to receive(:get).with('test_key').and_return({})
       get_handler.handle
     end
   end

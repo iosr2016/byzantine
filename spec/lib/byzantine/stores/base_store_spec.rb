@@ -1,5 +1,11 @@
 RSpec.describe Byzantine::Stores::BaseStore do
-  subject(:store) { described_class.new }
+  subject(:store) { described_class.new 'name' }
+
+  describe '#initialize' do
+    it 'assings proper name' do
+      expect(store.name).to eq('name')
+    end
+  end
 
   describe '#set' do
     it 'raises error' do
