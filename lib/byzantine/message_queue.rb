@@ -1,4 +1,5 @@
 require 'socket'
+require 'base64'
 
 module Byzantine
   class MessageQueue < BaseServer
@@ -17,7 +18,11 @@ module Byzantine
         raw_message = client.gets.chomp!
       end
 
-      Marshal.load raw_message
+      deserialize raw_message
+    end
+
+    def deserialize(raw_message)
+      Marshal.load Base64.strict_decode64(raw_message)
     end
 
     def log_message_handling(message)

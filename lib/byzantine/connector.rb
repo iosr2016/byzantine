@@ -1,4 +1,5 @@
 require 'socket'
+require 'base64'
 
 module Byzantine
   class Connector
@@ -13,10 +14,14 @@ module Byzantine
     end
 
     def send(message)
-      socket.puts Marshal.dump(message)
+      socket.puts serialize(message)
     end
 
     private
+
+    def serialize(message)
+      Base64.strict_encode64 Marshal.dump(message)
+    end
 
     def socket
       @socket ||= TCPSocket.new host, port
