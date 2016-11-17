@@ -8,15 +8,15 @@ module Byzantine
         data[:nack_count]               = (data[:nack_count] || 0) + 1
         data[:max_nack_sequence_number] = [data[:last_sequence_number], last_sequence_number].compact.max
 
-        handle_nack(data) if faulty_quorum?(data)
+        handle_nack(data) if reject_quorum?(data)
 
         session_store.set(key, data)
       end
 
       private
 
-      def faulty_quorum?(data)
-        data[:nack_count] > context.fault_tolerance
+      def reject_quorum?(data)
+        data[:nack_count] > (distributed.nodes.count + context.fault_tolerance) / 2
       end
 
       def handle_nack(data)
