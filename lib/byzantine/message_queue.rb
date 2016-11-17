@@ -9,6 +9,8 @@ module Byzantine
       message = receive_message
       log_message_handling message
       message_handler.handle message
+    rescue => e
+      logger.error e.inspect
     end
 
     def receive_message

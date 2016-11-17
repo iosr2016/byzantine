@@ -15,6 +15,8 @@ module Byzantine
 
         client.puts response.to_json
       end
+    rescue => e
+      logger.error e.inspect
     end
 
     def parse_request(raw_request)
