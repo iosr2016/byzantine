@@ -4,8 +4,7 @@ module Byzantine
       def_delegators :message, :key, :sequence_number, :value
 
       def handle
-        @data = session_store.get(key)
-        return if @data[:sequence_number] != sequence_number || @data[:value] != value
+        return if session_data[:sequence_number] != sequence_number || session_data[:value] != value
 
         handle_promise
       end
@@ -13,22 +12,25 @@ module Byzantine
       private
 
       def handle_promise
-        @data[:weak_accepted_count] = (@data[:weak_accepted_count] || 0) + 1
+        session_data[:weak_accepted_count] = (session_data[:weak_accepted_count] || 0) + 1
 
-        strong_acceptance if !@data[:strong_accepted] && weak_quorum?
+        strong_acceptance if !session_data[:strong_accepted] && weak_quorum?
 
-        session_store.set(key, @data)
+        session_store.set(key, session_data)
       end
 
       def weak_quorum?
-        @data[:weak_accepted_count] > (distributed.nodes.count + context.fault_tolerance) / 2
+        session_data[:weak_accepted_count] > (distributed.nodes.count + context.fault_tolerance) / 2
       end
 
       def strong_acceptance
-        @data[:strong_accepted] = true
+        session_data[:strong_accepted] = true
 
-        accept_message = Messages::AcceptMessage.new(node_id: node_id, key: key,
-                                                     sequence_number: @data[:sequence_number])
+        accept_message = Messages::AcceptMessage.new(
+          node_id:         node_id,
+          key:             key,
+          sequence_number: session_data[:sequence_number]
+        )
 
         distributed.broadcast accept_message
 

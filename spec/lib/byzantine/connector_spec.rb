@@ -10,6 +10,7 @@ RSpec.describe Byzantine::Connector do
 
   describe '#send' do
     let(:socket) { instance_double TCPSocket, puts: true }
+    let(:dumped_message) { double :dumped_message }
 
     it 'creates TCPSocket' do
       expect(TCPSocket).to receive(:new).with('h', 'p').and_return(socket)
@@ -18,7 +19,8 @@ RSpec.describe Byzantine::Connector do
 
     it 'dumps message' do
       allow(TCPSocket).to receive(:new).and_return(socket)
-      expect(Marshal).to receive(:dump).with('message')
+      allow(Marshal).to receive(:dump).with('message').and_return dumped_message
+      expect(Base64).to receive(:strict_encode64).with(dumped_message)
       connector.send('message')
     end
 
