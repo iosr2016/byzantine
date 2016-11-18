@@ -4,7 +4,7 @@ module Byzantine
       def_delegators :message, :key, :sequence_number, :value
 
       def handle
-        return if session_data[:sequence_number] != sequence_number || session_data[:value] != value
+        return if session_data[:sequence_number] != sequence_number
 
         handle_promise
       end
