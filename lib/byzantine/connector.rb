@@ -1,4 +1,5 @@
 require 'socket'
+require 'timeout'
 require 'base64'
 
 module Byzantine
@@ -14,7 +15,11 @@ module Byzantine
     end
 
     def send(message)
-      socket.puts serialize(message)
+      Timeout.timeout(5) do
+        socket.puts serialize(message)
+      end
+    rescue Timeout::Error, Errno::ECONNREFUSED
+      nil
     end
 
     private
