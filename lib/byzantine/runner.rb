@@ -13,6 +13,7 @@ module Byzantine
 
     def configure
       yield configuration
+      self
     end
 
     def run
