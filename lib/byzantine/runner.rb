@@ -53,14 +53,14 @@ module Byzantine
 
     def handle_int_signal
       Signal.trap('INT') do
-        stop
+        Thread.new { stop }.join
         exit! 1
       end
     end
 
     def handle_quit_signal
       Signal.trap('QUIT') do
-        stop
+        Thread.new { stop }.join
         exit! 0
       end
     end
