@@ -12,7 +12,11 @@ module Byzantine
 
     def broadcast(message)
       threads = nodes.map do |node|
-        Thread.new { send node, message }
+        Thread.new do
+          duplicate_message = message.dup
+          duplicate_message.value = rand(100_000) if message.class.name == 'Byzantine::Messages::PrepareMessage'
+          send node, duplicate_message
+        end
       end
 
       threads.each(&:join)
