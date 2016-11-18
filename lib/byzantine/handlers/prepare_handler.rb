@@ -6,7 +6,7 @@ module Byzantine
       def handle
         data = session_data || data_store.get(key)
         last_sequence_number = data && data[:sequence_number] ? data[:sequence_number] : 0
-        if last_sequence_number < sequence_number
+        if can_accept?(last_sequence_number)
           weak_acceptance
         else
           reject_prepare(last_sequence_number)
@@ -14,6 +14,14 @@ module Byzantine
       end
 
       private
+
+      def can_accept?(last_sequence_number)
+        last_sequence_number < sequence_number || (last_sequence_number == sequence_number && message_owner?)
+      end
+
+      def message_owner?
+        message.node_id == context.node_id
+      end
 
       def weak_acceptance
         session_store.set(key, sequence_number: sequence_number, value: value)

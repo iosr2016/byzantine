@@ -5,6 +5,7 @@ module Byzantine
 
       def handle
         number = create_sequence_number
+        session_data[:sequence_number] = number
         prepare_message = Messages::PrepareMessage.new node_id: node_id, key: key, sequence_number: number, value: value
 
         distributed.broadcast prepare_message
