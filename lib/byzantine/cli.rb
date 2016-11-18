@@ -9,6 +9,7 @@ module Byzantine
     method_option :fault_tolerance, type: :numeric, default: 0
     method_option :nodes_file,      type: :string
     method_option :pid_file,        type: :string
+    method_option :log_file,        type: :string
     method_option :config_file,     type: :string
 
     def start
@@ -26,6 +27,7 @@ module Byzantine
         config.queue_port      = config_options[:port] + 1
         config.fault_tolerance = config_options[:fault_tolerance]
         config.pid_file        = config_options[:pid_file] if config_options.key? :pid_file
+        config.log_file        = config_options[:log_file] if config_options.key? :log_file
         config.node_urls       = node_urls
       end
     end
