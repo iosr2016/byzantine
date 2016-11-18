@@ -30,6 +30,8 @@ RSpec.describe 'Integration' do
     end
   end
 
+  let(:functional_instances) { instances }
+
   let(:instance_runner) do
     InstanceRunner.new functional_instances
   end
@@ -49,8 +51,6 @@ RSpec.describe 'Integration' do
   end
 
   describe 'getting values' do
-    let(:functional_instances) { instances }
-
     let(:expected_response) do
       [
         { key: 'foo', value: nil },
@@ -67,10 +67,13 @@ RSpec.describe 'Integration' do
     end
   end
 
-  describe 'setting values' do
-    context 'when all instances are functional' do
-      let(:functional_instances) { instances }
+  describe 'setting single value' do
+    before do
+      client.set 'foo', 'bar'
+      sleep 1
+    end
 
+    context 'when all instances are functional' do
       let(:expected_response) do
         [
           { key: 'foo', value: 'bar' },
@@ -81,8 +84,6 @@ RSpec.describe 'Integration' do
       end
 
       it 'estabilishes consensus for set value' do
-        client.set 'foo', 'bar'
-        sleep 1
         expect(client.get('foo')).to match_array expected_response
       end
     end
@@ -100,9 +101,23 @@ RSpec.describe 'Integration' do
         end
 
         it 'estabilishes consensus for set value' do
-          client.set 'foo', 'bar'
-          sleep 1
           expect(client.get('foo')).to match_array expected_response
+        end
+
+        context 'when fault tolerance not met' do
+          let(:fault_tolerance) { 1 }
+
+          let(:expected_response) do
+            [
+              { key: 'foo', value: nil },
+              { key: 'foo', value: nil },
+              { key: 'foo', value: nil }
+            ]
+          end
+
+          it 'estabilishes consensus for set value' do
+            expect(client.get('foo')).to match_array expected_response
+          end
         end
       end
 
@@ -117,11 +132,35 @@ RSpec.describe 'Integration' do
         end
 
         it 'estabilishes consensus for set value' do
-          client.set 'foo', 'bar'
-          sleep 1
           expect(client.get('foo')).to match_array expected_response
         end
       end
+    end
+  end
+
+  describe 'setting multiple values synchronously' do
+    let(:functional_instances) { instances }
+
+    let(:expected_response) do
+      [
+        { key: 'foo', value: 'baz' },
+        { key: 'foo', value: 'baz' },
+        { key: 'foo', value: 'baz' },
+        { key: 'foo', value: 'baz' }
+      ]
+    end
+
+    before do
+      client.set 'foo', 'foo'
+      sleep 0.5
+      client.set 'foo', 'bar'
+      sleep 0.5
+      client.set 'foo', 'baz'
+      sleep 1
+    end
+
+    it 'estabilishes consensus for set value' do
+      expect(client.get('foo')).to match_array expected_response
     end
   end
 end
